@@ -1,0 +1,27 @@
+.home .card-img-top {
+  height: 180px;  /* Make the height the same for all */
+}
+
+.home-button-header-container {
+  bottom: 10px;
+  position: absolute;
+  z-index: 5;
+}
+
+.home-top-section {
+  background-image: url("https://decentralized-mvp.s3.amazonaws.com/fundraiser/home-banner-min.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  min-height: 250px;
+  position: relative;
+}
+
+.home-top-section-overlay {
+  background-color: rgba(248, 247, 216, 0.7);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
