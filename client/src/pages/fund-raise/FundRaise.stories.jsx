@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import FundRaise from './FundRaise';
 
 export default {
@@ -6,7 +6,23 @@ export default {
   component: FundRaise
 };
 
-const Template = (args) => <FundRaise {...args}/>;
+const Template = (args) => {
+  const [show, setShow] = useState(false)
+
+  const donateModal = {
+    show,
+    onChange: undefined,
+    onClick: () => setShow(true),
+    onClose: () => setShow(false),
+    onSubmit: event => event.preventDefault() 
+  }
+
+  args = { ...args, donateModal }
+
+  return (
+    <FundRaise {...args}/>
+  )
+};
 
 export const FundRaiseStory = Template.bind({});
 FundRaiseStory.args = {
@@ -14,5 +30,6 @@ FundRaiseStory.args = {
   id: 0,
   description: 'This is my first fund raiser for my dApp idea',
   current: 500,
-  goal: 3000
+  goal: 3000,
+  // donateModal: {} (defined above)
 };
