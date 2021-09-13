@@ -31,5 +31,6 @@ FundRaiseStory.args = {
   description: 'This is my first fund raiser for my dApp idea',
   current: 500,
   goal: 3000,
-  userIsFundRaiseCreator: true
+  userIsFundRaiseCreator: true,
+  withdraw: undefined
 };

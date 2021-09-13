@@ -15,7 +15,8 @@ export default function FundRaise({
   onSubmit,
   modalVisible,
   openModal,
-  userIsFundRaiseCreator
+  userIsFundRaiseCreator,
+  withdraw
 }) {
   return (
     <Container fluid="lg">
@@ -24,7 +25,7 @@ export default function FundRaise({
         userIsFundRaiseCreator ?
           <Row>
             <Col className="p-2">
-              <Button variant="danger">Withdraw</Button>
+              <Button variant="danger" onClick={withdraw}>Withdraw</Button>
             </Col>
           </Row> :
           null
