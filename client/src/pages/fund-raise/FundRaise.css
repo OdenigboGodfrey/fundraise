@@ -5,3 +5,10 @@
   height: 400px;
   position: relative;
 }
+
+.fund-raise-side-panel {
+  border: 1px solid rgba(0,0,0,.2);
+  border-radius: .3rem;
+  box-sizing: border-box;
+  padding: 10px;
+}
