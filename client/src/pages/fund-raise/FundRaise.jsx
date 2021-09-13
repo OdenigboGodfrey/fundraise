@@ -15,10 +15,20 @@ export default function FundRaise({
   onSubmit,
   modalVisible,
   openModal,
+  userIsFundRaiseCreator
 }) {
   return (
     <Container fluid="lg">
       <h1 className="mb-3">{title}</h1>
+      {
+        userIsFundRaiseCreator ?
+          <Row>
+            <Col className="p-2">
+              <Button variant="danger">Withdraw</Button>
+            </Col>
+          </Row> :
+          null
+      }
       <Row>
         <Col lg={8}>
           <div className="fund-raise-image" style={{ backgroundImage: `url("${getImageForFundRaise(id)}")` }}></div>
