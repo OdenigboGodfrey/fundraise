@@ -1,8 +1,10 @@
-import React from 'react';
-import { Card, Container, Row, Col, Button, Modal, Form } from 'react-bootstrap';
-import getImageForFundRaise from '../utils/get-image-for-fund-raise';
+import React, { useContext, useState, useEffect } from 'react'
+import { useHistory } from 'react-router'
+import { Card, Container, Row, Col, Button, Modal, Form } from 'react-bootstrap'
+import getImageForFundRaise from '../utils/get-image-for-fund-raise'
+import AppContext from '../../app-context'
 
-import './Home.css';
+import './Home.css'
 
 export function Home({
   closeModal,
@@ -48,7 +50,7 @@ export function Home({
         ))}
       </Row>
     </Container>
-  );
+  )
 }
 
 function FundRaise({
@@ -56,7 +58,7 @@ function FundRaise({
   title,
   onClickCard
 }) {
-  const fundRaiseImage = getImageForFundRaise(fundRaiseId);
+  const fundRaiseImage = getImageForFundRaise(fundRaiseId)
 
   return (
     <Card style={{ width: '18rem' }}>
@@ -66,10 +68,10 @@ function FundRaise({
         <Button onClick={() => onClickCard(fundRaiseId)} variant="primary">See Fund Raise</Button>
       </Card.Body>
     </Card>
-  );
+  )
 }
 
-export default function CreateModal({
+function CreateModal({
   onChange,
   onClose,
   onSubmit,
@@ -99,5 +101,82 @@ export default function CreateModal({
         </Form>
       </Modal.Body>
     </Modal>
-  );
+  )
+}
+
+export function HomeWrapper() {
+  const [fundRaiseForm, setFundRaiseForm] = useState({ title: '', goal: '', description: '' })
+  const [loading, setLoading] = useState(true)
+  const [modalVisible, setModalVisible] = useState(false)
+  const [fundRaises, setFundRaises] = useState([])
+
+  const { dependencies } = useContext(AppContext)
+  const { fundRaise, account, web3 } = dependencies
+
+  const history = useHistory()
+
+  useEffect(() => {
+    (async function() {
+      setupCreatePostListener()
+      setFundRaises(await getFundRaises())
+      setLoading(true)
+    })()
+  }, [])
+
+  /**
+   * @description Function used to get the events
+   */
+  async function getFundRaises() {
+    return await fundRaise.methods.getHomeData().call()
+  }
+
+  /**
+   * @description Wrapper for keeping code DRY
+   */
+  function navigateToFundRaise(id) {
+    history.push(`/fund-raise/${id}`)
+  }
+
+  /**
+   * @description On change handler for post modal
+   * @param {Object} event
+   */
+  function onChange(event) {
+    const { target } = event
+    setFundRaiseForm(previousState => ({ ...previousState, [target.name]: target.value }))
+  }
+
+  /**
+   * @description Submit handler for new post
+   * @param {Object} event 
+   */
+  async function onSubmit(event) {
+    event.preventDefault()
+    const { title, goal, description } = fundRaiseForm
+    await fundRaise.methods.createEvent(title, description, web3.utils.toWei(goal, 'ether')).send({ from: account })
+  }
+
+  /**
+   * @description Setup the create event listener
+   */
+  function setupCreatePostListener() {
+    fundRaise.events.EventCreated({}, (error, contractEvent) => {
+      const { id } = contractEvent.returnValues
+      navigateToFundRaise(id)
+    })
+  }
+
+  return (
+    loading ?
+      <Home
+        closeModal={() => setModalVisible(false)}
+        onChange={onChange}
+        onSubmit={onSubmit}
+        modalVisible={modalVisible}
+        openModal={() => setModalVisible(true)}
+        fundRaises={fundRaises}
+        onClickCard={id => navigateToFundRaise(id)}
+      /> :
+      <div>loading...</div>
+  )
 }
