@@ -32,5 +32,6 @@ FundRaiseStory.args = {
   current: 500,
   goal: 3000,
   userIsFundRaiseCreator: true,
-  withdraw: undefined
+  withdraw: undefined,
+  active: true
 };

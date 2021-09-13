@@ -16,13 +16,14 @@ export default function FundRaise({
   modalVisible,
   openModal,
   userIsFundRaiseCreator,
-  withdraw
+  withdraw,
+  active
 }) {
   return (
     <Container fluid="lg">
       <h1 className="mb-3">{title}</h1>
       {
-        userIsFundRaiseCreator ?
+        userIsFundRaiseCreator && active ?
           <Row>
             <Col className="p-2">
               <Button variant="danger" onClick={withdraw}>Withdraw</Button>
@@ -34,14 +35,18 @@ export default function FundRaise({
         <Col lg={8}>
           <div className="fund-raise-image" style={{ backgroundImage: `url("${getImageForFundRaise(id)}")` }}></div>
         </Col>
-        <Col>
-          <div className="fund-raise-side-panel mt-2 mt-lg-0">
-            <div className="fund-raise-goal">{current} raised of {goal}...</div>
-            <div className="fund-raise-donate-button-container">
-              <Button variant="primary" onClick={openModal}>Donate</Button>
+        {
+          active ?
+          <Col>
+            <div className="fund-raise-side-panel mt-2 mt-lg-0">
+              <div className="fund-raise-goal">{current} raised of {goal}...</div>
+              <div className="fund-raise-donate-button-container">
+                <Button variant="primary" onClick={openModal}>Donate</Button>
+              </div>
             </div>
-          </div>
-        </Col>
+          </Col> : 
+          null
+        }
       </Row>
       <p className="mt-3">{description}</p>
       <DonateModal
