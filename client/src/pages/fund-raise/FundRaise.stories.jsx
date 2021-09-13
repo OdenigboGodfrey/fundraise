@@ -10,14 +10,14 @@ const Template = (args) => {
   const [show, setShow] = useState(false)
 
   const donateModal = {
-    show,
+    modalVisible: show,
     onChange: undefined,
-    onClick: () => setShow(true),
-    onClose: () => setShow(false),
+    openModal: () => setShow(true),
+    closeModal: () => setShow(false),
     onSubmit: event => event.preventDefault() 
   }
 
-  args = { ...args, donateModal }
+  args = { ...args, ...donateModal }
 
   return (
     <FundRaise {...args}/>
@@ -30,6 +30,5 @@ FundRaiseStory.args = {
   id: 0,
   description: 'This is my first fund raiser for my dApp idea',
   current: 500,
-  goal: 3000,
-  // donateModal: {} (defined above)
+  goal: 3000
 };

@@ -10,10 +10,12 @@ export default function FundRaise({
   description,
   current,
   goal,
-  donateModal
+  closeModal,
+  onChange,
+  onSubmit,
+  modalVisible,
+  openModal,
 }) {
-  const { onClick, show, onClose, onChange, onSubmit } = donateModal
-
   return (
     <Container fluid="lg">
       <h1 className="mb-3">{title}</h1>
@@ -25,17 +27,17 @@ export default function FundRaise({
           <div className="fund-raise-side-panel mt-2 mt-lg-0">
             <div className="fund-raise-goal">{current} raised of {goal}...</div>
             <div className="fund-raise-donate-button-container">
-              <Button variant="primary" onClick={onClick}>Donate</Button>
+              <Button variant="primary" onClick={openModal}>Donate</Button>
             </div>
           </div>
         </Col>
       </Row>
       <p className="mt-3">{description}</p>
       <DonateModal
-        onClose={onClose}
+        onClose={closeModal}
         onChange={onChange}
         onSubmit={onSubmit}
-        show={show}
+        show={modalVisible}
       />
     </Container>
   )
