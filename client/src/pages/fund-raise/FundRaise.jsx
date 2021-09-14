@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useContext, useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import { Container, Col, Row, Button, Modal, Form } from 'react-bootstrap'
 import getImageForFundRaise from '../utils/get-image-for-fund-raise'
+import AppContext from '../../app-context'
 
 import './FundRaise.css'
 
@@ -81,5 +83,81 @@ function DonateModal({
         </Form>
       </Modal.Body>
     </Modal>
+  )
+}
+
+export function FundRaiseWrapper() {
+  const [donateForm, setDonateForm] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [uiData, setUiData] = useState({})
+
+  const { id } = useParams()
+
+  const { dependencies } = useContext(AppContext)
+  const { fundRaise, account, web3 } = dependencies
+
+  useEffect(() => {
+    (async function() {
+      setUiData(await getFundRaiseData())
+    })()
+  }, [])
+  
+  useEffect(() => {
+    if (uiData.current) {
+      setupDonateListener()
+      setupWithdrawListener()
+      setLoading(false)
+    }
+  }, [uiData])
+
+  async function getFundRaiseData() {
+    return await fundRaise.methods.fundRaises(id).call()
+  }
+
+  function onChange(event) {
+    setDonateForm(event.target.value)
+  }
+
+  async function onSubmit(event) {
+    event.preventDefault()
+    await fundRaise.methods.donate(id).send({ from: account, value: web3.utils.toWei(donateForm, 'ether') })
+  }
+
+  function setupDonateListener() {
+    fundRaise.events.Donated({}, (error, contractEvent) => {
+      const { amount } = contractEvent.returnValues
+      const updatedTotal = parseInt(amount) + parseInt(uiData.current) + ''
+      setUiData(previousState => ({ ...previousState, current: updatedTotal, modalVisible: false }))
+    })
+  }
+  
+  function setupWithdrawListener() {
+    fundRaise.events.Withdraw({}, (error, contractEvent) => {
+      setUiData(previousState => ({ ...previousState, status: false }))
+    })
+  }
+
+  async function withdraw() {
+    await fundRaise.methods.withdraw(id).send({ from: account })
+  }
+
+  return (
+    !loading ?
+      <FundRaise
+        title={uiData.title}
+        id={id}
+        description={uiData.description}
+        current={web3.utils.fromWei(uiData.current, 'ether')}
+        goal={web3.utils.fromWei(uiData.goal, 'ether')}
+        closeModal={() => setUiData(previousState => ({ ...previousState, modalVisible: false }))}
+        onChange={onChange}
+        onSubmit={onSubmit}
+        modalVisible={uiData.modalVisible}
+        openModal={() => setUiData(previousState => ({ ...previousState, modalVisible: true }))}
+        userIsFundRaiseCreator={uiData.creator === account}
+        withdraw={withdraw}
+        active={uiData.status}
+      /> :
+      <div>loading....</div>
   )
 }
