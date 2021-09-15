@@ -75,7 +75,7 @@ function DonateModal({
       <Modal.Body>
         <Form onSubmit={onSubmit}>
           <Form.Group controlId="amount">
-            <Form.Label>Amount</Form.Label>
+            <Form.Label>Amount (ETH)</Form.Label>
             <Form.Control type="text" name="amount" onChange={onChange}/>
           </Form.Group>
           <Button variant="secondary" onClick={onClose} className="me-1 mt-1">Close</Button>
